@@ -1,3 +1,20 @@
+terraform {
+  cloud {
+    organization = "greencompute"
+    workspaces {
+      name = "greencompute"
+    }
+  }
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.72.1"
+    }
+  }
+
+  required_version = ">= 1.2.0"
+}
+
 provider "aws" {
   region = var.region
 }
@@ -22,14 +39,23 @@ import {
 # ====== Resource Definitions =====
 resource "aws_ecr_repository" "greencompute_frontend" {
   name = "${var.project_name}-frontend"
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "aws_ecr_repository" "greencompute_webserver" {
   name = "${var.project_name}-webserver"
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "aws_ecr_repository" "greencompute_backend" {
   name = "${var.project_name}-backend"
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 

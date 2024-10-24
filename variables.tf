@@ -9,3 +9,8 @@ variable "project_name" {
   type        = string
   default	 = "greencompute"
 }
+
+variable "ecr_services" {
+  type    = list(string)
+  default = ["frontend", "webserver", "backend"]
+}
