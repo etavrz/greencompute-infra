@@ -7,10 +7,10 @@ variable "region" {
 variable "project_name" {
 	description = "The name of the project"
   type        = string
-  default	 = "greencompute"
+  default	    = "greencompute"
 }
 
-variable "ecr_services" {
-  type    = list(string)
-  default = ["frontend", "webserver", "backend"]
+variable "environment" {
+  description = "The environment in which the resources will be created"
+  type        = string
 }

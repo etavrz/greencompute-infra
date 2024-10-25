@@ -1,60 +1,30 @@
-terraform {
-  cloud {
-    organization = "greencompute"
-    workspaces {
-      name = "greencompute"
-    }
-  }
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.72.1"
-    }
-  }
-
-  required_version = ">= 1.2.0"
-}
-
 provider "aws" {
   region = var.region
 }
 
 # ====== ECR Imports =====
 import {
-  to = aws_ecr_repository.greencompute_frontend
+  to = module.ecr.aws_ecr_repository.greencompute_frontend
   id = "${var.project_name}-frontend"
 }
 
 import {
-  to = aws_ecr_repository.greencompute_webserver
+  to = module.ecr.aws_ecr_repository.greencompute_webserver
   id = "${var.project_name}-webserver"
 }
 
 import {
-  to = aws_ecr_repository.greencompute_backend
+  to = module.ecr.aws_ecr_repository.greencompute_backend
   id = "${var.project_name}-backend"
 }
 
+module "ecr" {
+  source = "./modules/container-registries"
 
-# ====== Resource Definitions =====
-resource "aws_ecr_repository" "greencompute_frontend" {
-  name = "${var.project_name}-frontend"
-  lifecycle {
-    prevent_destroy = true
-  }
-}
-
-resource "aws_ecr_repository" "greencompute_webserver" {
-  name = "${var.project_name}-webserver"
-  lifecycle {
-    prevent_destroy = true
-  }
-}
-
-resource "aws_ecr_repository" "greencompute_backend" {
-  name = "${var.project_name}-backend"
-  lifecycle {
-    prevent_destroy = true
+  project_name = var.project_name
+  tags = {
+    project     = var.project_name
+    environment = var.environment
   }
 }
 
