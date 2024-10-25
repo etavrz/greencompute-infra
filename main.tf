@@ -28,6 +28,15 @@ module "ecr" {
   }
 }
 
+module "network" {
+  source = "./modules/networking"
+  
+  tags = {
+    project     = var.project_name
+    environment = var.environment
+  }
+}
+
 
 # Create an iam user with access to the ECR repository
 resource "aws_iam_user" "greencompute_user" {
