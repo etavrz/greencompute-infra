@@ -52,8 +52,11 @@ module "rds" {
 }
 
 module "ecs" {
-  source = "./modules/ecs"
-  tags = local.tags
+  source        = "./modules/ecs"
+  tags          = local.tags
+  ecr_webserver = module.ecr.ecr_webserver
+  ecr_frontend  = module.ecr.ecr_frontend
+  ecr_backend   = module.ecr.ecr_backend
 }
 
 module "sg" {
