@@ -7,3 +7,8 @@ output "ecr_instance" {
   value = module.ecr.ecr_instace
   description = "The URL of the ECR repository"
 }
+
+output "vpc_id" {
+  value = module.network.vpc_id
+  description = "The ID of the VPC"
+}

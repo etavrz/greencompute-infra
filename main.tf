@@ -27,41 +27,43 @@ import {
 }
 
 # ====== Module Definitions =====
-module "ecr" {
-  source = "./modules/container-registries"
-
-  project_name = var.project_name
+# Set a local tags variable to be used in all modules
+locals {
   tags = {
     project     = var.project_name
     environment = var.environment
   }
+}
+
+module "ecr" {
+  source = "./modules/container-registries"
+  project_name = var.project_name
+  tags = local.tags
 }
 
 module "network" {
   source = "./modules/networking"
+  tags = local.tags
+}
 
+module "rds" {
+  source = "./modules/rds"
   tags = {
     project     = var.project_name
     environment = var.environment
   }
 }
 
-module "rds" {
-  source = "./modules/rds"
-}
-
 module "sg" {
-  vpc_id       = module.network.vpc_id
-  source       = "./modules/security-group"
-  project_name = var.project_name
+  vpc_id         = module.network.vpc_id
+  vpc_cidr_block = module.network.vpc_cidr_block
+  source         = "./modules/security-group"
+  project_name   = var.project_name
+  tags = local.tags
 }
 
 # Create an iam user with access to the ECR repository
 resource "aws_iam_user" "greencompute_user" {
   name = "${var.project_name}-user"
-
-  tags = {
-    project     = var.project_name
-    environment = var.environment
-  }
+  tags = local.tags
 }

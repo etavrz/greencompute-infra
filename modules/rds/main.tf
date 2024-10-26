@@ -9,4 +9,5 @@ resource "aws_db_instance" "greencompute_db" {
 	monitoring_interval 				 = 60
 	performance_insights_enabled = true
 	publicly_accessible					 = true
+	tags  											 = var.tags
 }
