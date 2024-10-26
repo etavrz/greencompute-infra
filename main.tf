@@ -48,10 +48,12 @@ module "network" {
 
 module "rds" {
   source = "./modules/rds"
-  tags = {
-    project     = var.project_name
-    environment = var.environment
-  }
+  tags = local.tags
+}
+
+module "ecs" {
+  source = "./modules/ecs"
+  tags = local.tags
 }
 
 module "sg" {
