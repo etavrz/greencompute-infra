@@ -22,3 +22,8 @@ output "ecr_webserver" {
   value = module.ecr.ecr_webserver
   description = "The URL of the ECR repository"
 }
+
+output "load_balancer_dns" {
+  value = module.ecs.load_balancer_dns
+  description = "The DNS of the load balancer"
+}

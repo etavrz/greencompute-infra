@@ -1,9 +1,3 @@
-variable "region" {
-  description = "The region in which the resources will be created"
-  type        = string
-  default	    = "us-east-1a"
-}
-
 variable "tags" {
   description = "Tags to set on the bucket."
   type        = map(string)

@@ -36,27 +36,31 @@ locals {
 }
 
 module "ecr" {
-  source = "./modules/container-registries"
+  source       = "./modules/container-registries"
   project_name = var.project_name
-  tags = local.tags
+  tags         = local.tags
 }
 
 module "network" {
   source = "./modules/networking"
-  tags = local.tags
+  tags   = local.tags
 }
 
 module "rds" {
   source = "./modules/rds"
-  tags = local.tags
+  tags   = local.tags
 }
 
 module "ecs" {
-  source        = "./modules/ecs"
-  tags          = local.tags
-  ecr_webserver = module.ecr.ecr_webserver
-  ecr_frontend  = module.ecr.ecr_frontend
-  ecr_backend   = module.ecr.ecr_backend
+  source            = "./modules/ecs"
+  ecr_webserver     = module.ecr.ecr_webserver
+  ecr_frontend      = module.ecr.ecr_frontend
+  ecr_backend       = module.ecr.ecr_backend
+  vpc_id            = module.network.vpc_id
+  subnet_1_id       = module.network.subnet_1_id
+  subnet_2_id       = module.network.subnet_2_id
+  security_group_id = module.sg.security_group_id
+  tags              = local.tags
 }
 
 module "sg" {
@@ -64,7 +68,7 @@ module "sg" {
   vpc_cidr_block = module.network.vpc_cidr_block
   source         = "./modules/security-group"
   project_name   = var.project_name
-  tags = local.tags
+  tags           = local.tags
 }
 
 # Create an iam user with access to the ECR repository
