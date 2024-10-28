@@ -38,3 +38,8 @@ variable "security_group_id" {
 	description = "The ID of the security group"
 	type        = string
 }
+
+variable "secret_id" {
+	description = "The ID of the secret"
+	type        = string
+}

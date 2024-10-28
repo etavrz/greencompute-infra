@@ -1,5 +1,20 @@
 data "aws_caller_identity" "current" {}
 
+data "aws_secretsmanager_secret_version" "gc_secret" {
+  secret_id = var.secret_id
+}
+
+locals {
+  gc_secrets = jsondecode(data.aws_secretsmanager_secret_version.gc_secret.secret_string)
+
+  gc_secrets_list = [
+    for name, value in local.gc_secrets : {
+      name  = name
+      value = value
+    }
+  ]
+}
+
 resource "aws_ecs_cluster" "gc_cluster" {
 	name = "greencompute-cluster"
 	tags = var.tags
@@ -27,6 +42,7 @@ resource "aws_ecs_task_definition" "gc_task_def" {
 			cpu       = 128
 			memory    = 256
 			essential = true
+
 			portMappings = [
 				{
 					containerPort = 80
@@ -44,14 +60,15 @@ resource "aws_ecs_task_definition" "gc_task_def" {
 			}
 		},
 		{
-			name      = "backend"
-			image     = "${var.ecr_backend}:latest"
-			cpu       = 256
-			memory    = 512
-			essential = true
+			name      			 = "backend"
+			image     			 = "${var.ecr_backend}:latest"
+			cpu       			 = 256
+			memory    			 = 512
+			essential 			 = true
+			environment 		 = local.gc_secrets_list
 			logConfiguration = {
 				logDriver = "awslogs"
-				options = {
+				options 	= {
 					"awslogs-group" 			  = aws_cloudwatch_log_group.gc_log_group.name
 					"awslogs-region" 				= "us-east-1"
 					"awslogs-stream-prefix" = "webserver"
@@ -59,11 +76,11 @@ resource "aws_ecs_task_definition" "gc_task_def" {
 			}
 		},
 		{
-			name			= "frontend"
-			image     = "${var.ecr_frontend}:latest"
-			cpu       = 256
-			memory    = 512
-			essential = true
+			name						 = "frontend"
+			image     			 = "${var.ecr_frontend}:latest"
+			cpu       			 = 256
+			memory    			 = 512
+			essential 			 = true
 			logConfiguration = {
 				logDriver = "awslogs"
 				options = {

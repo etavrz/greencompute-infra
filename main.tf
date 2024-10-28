@@ -60,6 +60,7 @@ module "ecs" {
   subnet_1_id       = module.network.subnet_1_id
   subnet_2_id       = module.network.subnet_2_id
   security_group_id = module.sg.security_group_id
+  secret_id         = var.secret_id
   tags              = local.tags
 }
 

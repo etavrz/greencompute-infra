@@ -14,3 +14,8 @@ variable "environment" {
   description = "The environment in which the resources will be created"
   type        = string
 }
+
+variable "secret_id" {
+  description = "The ID of the secret"
+  type        = string
+}
