@@ -5,6 +5,11 @@ resource "aws_ecs_cluster" "gc_cluster" {
 	tags = var.tags
 }
 
+resource "aws_cloudwatch_log_group" "gc_log_group" {
+	name = "/ecs/greencompute_logs"
+	retention_in_days = 7
+}
+
 resource "aws_ecs_task_definition" "gc_task_def" {
 	family                   = "greencompute-task"
 	cpu                      = 1024
@@ -29,6 +34,14 @@ resource "aws_ecs_task_definition" "gc_task_def" {
 					protocol      = "tcp"
 				}
 			]
+			logConfiguration = {
+				logDriver = "awslogs"
+				options = {
+					"awslogs-group" 			  = aws_cloudwatch_log_group.gc_log_group.name
+					"awslogs-region" 				= "us-east-1"
+					"awslogs-stream-prefix" = "webserver"
+				}
+			}
 		},
 		{
 			name      = "backend"
@@ -36,6 +49,14 @@ resource "aws_ecs_task_definition" "gc_task_def" {
 			cpu       = 256
 			memory    = 512
 			essential = true
+			logConfiguration = {
+				logDriver = "awslogs"
+				options = {
+					"awslogs-group" 			  = aws_cloudwatch_log_group.gc_log_group.name
+					"awslogs-region" 				= "us-east-1"
+					"awslogs-stream-prefix" = "webserver"
+				}
+			}
 		},
 		{
 			name			= "frontend"
@@ -43,6 +64,14 @@ resource "aws_ecs_task_definition" "gc_task_def" {
 			cpu       = 256
 			memory    = 512
 			essential = true
+			logConfiguration = {
+				logDriver = "awslogs"
+				options = {
+					"awslogs-group" 			  = aws_cloudwatch_log_group.gc_log_group.name
+					"awslogs-region" 				= "us-east-1"
+					"awslogs-stream-prefix" = "webserver"
+				}
+			}
 		}
 	])
 		runtime_platform {
@@ -83,21 +112,21 @@ resource "aws_lb_listener" "gc_listener" {
 	
 }
 
-resource "aws_ecs_service" "gc_service" {
-	name            = "greencompute-service"
-	cluster         = aws_ecs_cluster.gc_cluster.id
-	task_definition = aws_ecs_task_definition.gc_task_def.arn
-	desired_count   = 1
-	force_new_deployment = true
+# resource "aws_ecs_service" "gc_service" {
+# 	name            = "greencompute-service"
+# 	cluster         = aws_ecs_cluster.gc_cluster.id
+# 	task_definition = aws_ecs_task_definition.gc_task_def.arn
+# 	desired_count   = 1
+# 	force_new_deployment = true
 
-	load_balancer {
-		target_group_arn = aws_lb_target_group.gc_tg.arn
-		container_name    = "webserver"
-		container_port    = 80
-	}
-	network_configuration {
-		subnets          = [var.subnet_1_id, var.subnet_2_id]
-		security_groups  = [var.security_group_id]
-	}
-	depends_on = [aws_ecs_task_definition.gc_task_def]
-}
+# 	load_balancer {
+# 		target_group_arn = aws_lb_target_group.gc_tg.arn
+# 		container_name    = "webserver"
+# 		container_port    = 80
+# 	}
+# 	network_configuration {
+# 		subnets          = [var.subnet_1_id, var.subnet_2_id]
+# 		security_groups  = [var.security_group_id]
+# 	}
+# 	depends_on = [aws_ecs_task_definition.gc_task_def]
+# }
