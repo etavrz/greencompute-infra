@@ -20,10 +20,15 @@ import {
   id = "${var.project_name}-backend"
 }
 
-## RDS import
+## Storage import
 import {
   to = module.rds.aws_db_instance.greencompute_db
   id = "${var.project_name}-db"
+}
+
+import {
+  to = aws_s3_bucket.greencompute_bucket
+  id = "${var.project_name}"
 }
 
 # ====== Module Definitions =====
@@ -72,8 +77,7 @@ module "sg" {
   tags           = local.tags
 }
 
-# Create an iam user with access to the ECR repository
-resource "aws_iam_user" "greencompute_user" {
-  name = "${var.project_name}-user"
-  tags = local.tags
+resource "aws_s3_bucket" "greencompute_bucket" {
+  bucket = "${var.project_name}"
+  tags   = local.tags
 }
