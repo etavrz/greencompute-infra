@@ -99,7 +99,7 @@ resource "aws_ecs_task_definition" "gc_task_def" {
 
 
 resource "aws_lb" "gc_lb" {
-	name 						 	 = "greencompute-lb"
+	name 						 	 = "greencompute"
 	internal 				 	 = false
 	load_balancer_type = "application"
 	security_groups 	 = [var.security_group_id]
@@ -126,24 +126,24 @@ resource "aws_lb_listener" "gc_listener" {
 		type             = "forward"
 		target_group_arn = aws_lb_target_group.gc_tg.arn
 	}
-	
 }
 
-# resource "aws_ecs_service" "gc_service" {
-# 	name            = "greencompute-service"
-# 	cluster         = aws_ecs_cluster.gc_cluster.id
-# 	task_definition = aws_ecs_task_definition.gc_task_def.arn
-# 	desired_count   = 1
-# 	force_new_deployment = true
+resource "aws_ecs_service" "gc_service" {
+	name            		 = "greencompute-service"
+	cluster         		 = aws_ecs_cluster.gc_cluster.id
+	task_definition 		 = aws_ecs_task_definition.gc_task_def.arn
+	desired_count   		 = 1
+	force_new_deployment = true
+	launch_type 				 = "FARGATE"	
 
-# 	load_balancer {
-# 		target_group_arn = aws_lb_target_group.gc_tg.arn
-# 		container_name    = "webserver"
-# 		container_port    = 80
-# 	}
-# 	network_configuration {
-# 		subnets          = [var.subnet_1_id, var.subnet_2_id]
-# 		security_groups  = [var.security_group_id]
-# 	}
-# 	depends_on = [aws_ecs_task_definition.gc_task_def]
-# }
+	load_balancer {
+		target_group_arn 	= aws_lb_target_group.gc_tg.arn
+		container_name    = "webserver"
+		container_port    = 80
+	}
+	network_configuration {
+		subnets          = [var.subnet_1_id, var.subnet_2_id]
+		security_groups  = [var.security_group_id]
+		assign_public_ip = true
+	}
+}
