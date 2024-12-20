@@ -27,8 +27,8 @@ resource "aws_cloudwatch_log_group" "gc_log_group" {
 
 resource "aws_ecs_task_definition" "gc_task_def" {
 	family                   = "greencompute-task"
-	cpu                      = 1024
-	memory                   = 2048
+	cpu                      = 2048
+	memory                   = 4096
 	network_mode             = "awsvpc"
 	requires_compatibilities = ["FARGATE"]
 	tags                     = var.tags
@@ -62,8 +62,8 @@ resource "aws_ecs_task_definition" "gc_task_def" {
 		{
 			name      			 = "backend"
 			image     			 = "${var.ecr_backend}:latest"
-			cpu       			 = 256
-			memory    			 = 512
+			cpu       			 = 512
+			memory    			 = 1024
 			essential 			 = true
 			environment 		 = local.gc_secrets_list
 			logConfiguration = {
@@ -78,8 +78,8 @@ resource "aws_ecs_task_definition" "gc_task_def" {
 		{
 			name						 = "frontend"
 			image     			 = "${var.ecr_frontend}:latest"
-			cpu       			 = 256
-			memory    			 = 512
+			cpu       			 = 512
+			memory    			 = 1024
 			essential 			 = true
 			logConfiguration = {
 				logDriver = "awslogs"

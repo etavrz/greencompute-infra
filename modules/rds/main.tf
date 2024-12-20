@@ -10,4 +10,7 @@ resource "aws_db_instance" "greencompute_db" {
 	performance_insights_enabled = true
 	publicly_accessible					 = true
 	tags  											 = var.tags
+	skip_final_snapshot   			 = true
+	backup_retention_period      = 0
+	apply_immediately     			 = true
 }

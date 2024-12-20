@@ -80,4 +80,5 @@ module "sg" {
 resource "aws_s3_bucket" "greencompute_bucket" {
   bucket = "${var.project_name}"
   tags   = local.tags
+  force_destroy = true
 }
